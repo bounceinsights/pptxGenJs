@@ -615,6 +615,21 @@ export function makeXmlCharts (rel: ISlideRelChart): string {
 			usesSecondaryValAxis = usesSecondaryValAxis || options.secondaryValAxis
 			strXml += makeChartType(type.type, type.data, options, valAxisId, catAxisId, true)
 		})
+				
+		// Handle combo chart legend visibility
+		if (Array.isArray(rel.opts._type)) {
+			rel.opts._type.forEach(type => {
+				const showLegend = type.options.showLegend
+				if (!showLegend) {
+					type.data.forEach(obj => {
+						strXml += '    <c:legendEntry>'
+						strXml += `        <c:idx val="${obj._dataIndex}"/>`
+						strXml += '        <c:delete val="1"/>'
+						strXml += '    </c:legendEntry>'
+					})
+				}
+			})
+		}
 	} else {
 		strXml += makeChartType(rel.opts._type, rel.data, rel.opts, AXIS_ID_VALUE_PRIMARY, AXIS_ID_CATEGORY_PRIMARY, false)
 	}
