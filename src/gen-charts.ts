@@ -616,20 +616,7 @@ export function makeXmlCharts (rel: ISlideRelChart): string {
 			strXml += makeChartType(type.type, type.data, options, valAxisId, catAxisId, true)
 		})
 				
-		// Handle combo chart legend visibility
-		if (Array.isArray(rel.opts._type)) {
-			rel.opts._type.forEach(type => {
-				const showLegend = type.options.showLegend
-				if (!showLegend) {
-					type.data.forEach(obj => {
-						strXml += '    <c:legendEntry>'
-						strXml += `        <c:idx val="${obj._dataIndex}"/>`
-						strXml += '        <c:delete val="1"/>'
-						strXml += '    </c:legendEntry>'
-					})
-				}
-			})
-		}
+		
 	} else {
 		strXml += makeChartType(rel.opts._type, rel.data, rel.opts, AXIS_ID_VALUE_PRIMARY, AXIS_ID_CATEGORY_PRIMARY, false)
 	}
@@ -724,23 +711,39 @@ export function makeXmlCharts (rel: ISlideRelChart): string {
 			strXml += '<c:legendPos val="' + rel.opts.legendPos + '"/>'
 			// strXml += '<c:layout/>'
 			strXml += '<c:overlay val="0"/>'
-			if (rel.opts.legendFontFace || rel.opts.legendFontSize || rel.opts.legendColor) {
-				strXml += '<c:txPr>'
-				strXml += '  <a:bodyPr/>'
-				strXml += '  <a:lstStyle/>'
-				strXml += '  <a:p>'
-				strXml += '    <a:pPr>'
-				strXml += rel.opts.legendFontSize ? `<a:defRPr sz="${Math.round(Number(rel.opts.legendFontSize) * 100)}">` : '<a:defRPr>'
-				if (rel.opts.legendColor) strXml += genXmlColorSelection(rel.opts.legendColor)
-				if (rel.opts.legendFontFace) strXml += '<a:latin typeface="' + rel.opts.legendFontFace + '"/>'
-				if (rel.opts.legendFontFace) strXml += '<a:cs    typeface="' + rel.opts.legendFontFace + '"/>'
-				strXml += '      </a:defRPr>'
-				strXml += '    </a:pPr>'
-				strXml += '    <a:endParaRPr lang="en-US"/>'
-				strXml += '  </a:p>'
-				strXml += '</c:txPr>'
-			}
-			strXml += '</c:legend>'
+			                        if (rel.opts.legendFontFace || rel.opts.legendFontSize || rel.opts.legendColor) {
+                                strXml += '<c:txPr>'
+                                strXml += '  <a:bodyPr/>'
+                                strXml += '  <a:lstStyle/>'
+                                strXml += '  <a:p>'
+                                strXml += '    <a:pPr>'
+                                strXml += rel.opts.legendFontSize ? `<a:defRPr sz="${Math.round(Number(rel.opts.legendFontSize) * 100)}">` : '<a:defRPr>'
+                                if (rel.opts.legendColor) strXml += genXmlColorSelection(rel.opts.legendColor)
+                                if (rel.opts.legendFontFace) strXml += '<a:latin typeface="' + rel.opts.legendFontFace + '"/>'
+                                if (rel.opts.legendFontFace) strXml += '<a:cs    typeface="' + rel.opts.legendFontFace + '"/>'
+                                strXml += '      </a:defRPr>'
+                                strXml += '    </a:pPr>'
+                                strXml += '    <a:endParaRPr lang="en-US"/>'
+                                strXml += '  </a:p>'
+                                strXml += '</c:txPr>'
+                        }
+                        
+                        // Handle combo chart legend visibility
+                        if (Array.isArray(rel.opts._type)) {
+                                rel.opts._type.forEach(type => {
+                                        const showLegend = type.options.showLegend
+                                        if (!showLegend) {
+                                                type.data.forEach(obj => {
+                                                        strXml += '    <c:legendEntry>'
+                                                        strXml += `        <c:idx val="${obj._dataIndex}"/>`
+                                                        strXml += '        <c:delete val="1"/>'
+                                                        strXml += '    </c:legendEntry>'
+                                                })
+                                        }
+                                })
+                        }
+                        
+                        strXml += '</c:legend>'
 		}
 	}
 
